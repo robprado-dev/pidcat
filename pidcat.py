@@ -1,4 +1,4 @@
-#!/usr/bin/env -S python -u
+#!/usr/bin/env -S python3 -u
 
 '''
 Copyright 2009, The Android Open Source Project
@@ -141,6 +141,20 @@ def allocate_color(tag):
     LAST_USED.append(color)
   return color
 
+def colorize_message_by_level(level, message):
+  if level == 'V':
+    colored_message = colorize(message, fg=WHITE)
+  if level == 'D':
+    colored_message = colorize(message, fg=BLUE)
+  if level == 'I': 
+    colored_message = colorize(message, fg=GREEN)
+  if level == 'W': 
+    colored_message = colorize(message, fg=YELLOW)
+  if level == 'E': 
+    colored_message = colorize(message, fg=RED)
+  if level == 'F': 
+    colored_message = colorize(message, fg=RED)
+  return colored_message
 
 RULES = {
   # StrictMode policy violation; ~duration=319 ms: android.os.StrictMode$StrictModeDiskWriteViolation: policy=31 violation=1
@@ -159,11 +173,11 @@ if args.color_gc:
 
 TAGTYPES = {
   'V': colorize(' V ', fg=WHITE, bg=BLACK),
-  'D': colorize(' D ', fg=BLACK, bg=BLUE),
-  'I': colorize(' I ', fg=BLACK, bg=GREEN),
-  'W': colorize(' W ', fg=BLACK, bg=YELLOW),
-  'E': colorize(' E ', fg=BLACK, bg=RED),
-  'F': colorize(' F ', fg=BLACK, bg=RED),
+  'D': colorize(' D ', fg=WHITE, bg=BLUE),
+  'I': colorize(' I ', fg=WHITE, bg=GREEN),
+  'W': colorize(' W ', fg=WHITE, bg=YELLOW),
+  'E': colorize(' E ', fg=WHITE, bg=RED),
+  'F': colorize(' F ', fg=WHITE, bg=RED),
 }
 
 PID_LINE = re.compile(r'^\w+\s+(\w+)\s+\w+\s+\w+\s+\w+\s+\w+\s+\w+\s+\w\s([\w|\.|\/]+)$')
@@ -358,5 +372,5 @@ while adb.poll() is None:
     replace = RULES[matcher]
     message = matcher.sub(replace, message)
 
-  linebuf += indent_wrap(message)
-  print(linebuf.encode('utf-8'))
+  linebuf += colorize_message_by_level(level, indent_wrap(message))
+  print(linebuf)
